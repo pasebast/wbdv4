@@ -97,7 +97,7 @@ unset($_SESSION['error_message']);
                     <li><a href="login.php">LOGIN</a></li>
                 <?php endif; ?>
                 <li><a href="account.php">MY ACCOUNT</a></li>
-                <li><a href="cart.php" class="cart-icon"><i class="fas fa-shopping-cart"></i></a></li>
+         
             </ul>
         </div>
     </nav>

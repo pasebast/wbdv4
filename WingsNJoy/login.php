@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 if ($accountStatus == 'Active') {
                     $_SESSION['loggedin'] = true;
                     $_SESSION['user_id'] = $userId;
-                    $_SESSION['email'] = $fetchedEmail;
+                    $_SESSION['email'] = $fetchedEmail; // Ensure email is correctly set
                     header("Location: index.php");
                     exit();
                 } elseif ($accountStatus == 'Pending') {
@@ -55,6 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
+
 
 
 <!DOCTYPE html>
@@ -78,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <li><a href="menu.php"> MENU </a></li>
                 <li><a href="register.php"> REGISTER </a></li>
                 <li><a href="account.php"> MY ACCOUNT </a></li>
-                <li><a href="cart.php" class="cart-icon"><i class="fas fa-shopping-cart"></i></a></li>
+                
             </ul>
         </div>
     </nav>

@@ -1,30 +1,53 @@
 <?php
 session_start();
+ini_set('session.bug_compat_42', '0');
+ini_set('session.bug_compat_warn', '0');
 include 'config.php';
+date_default_timezone_set('Asia/Manila'); // Set to your local time zone
+// Debugging: Check session email
+if (isset($_SESSION['email'])) {
+    error_log("Session email is set: " . $_SESSION['email']);
+} else {
+    error_log("Session email is NOT set.");
+}
 
 // Fetch user profile data from the database using user email
 function getUserDetails($conn, $email) {
-    $stmt = $conn->prepare("SELECT First_Name, phone_number, delivery_address FROM users WHERE email = ?");
+    $stmt = $conn->prepare("SELECT First_Name, Last_Name, phone_number, delivery_address FROM users WHERE email = ?");
     if (!$stmt) {
         echo "Error preparing statement: " . $conn->error;
         return null;
     }
     $stmt->bind_param("s", $email);
     $stmt->execute();
-    $stmt->bind_result($user_name, $user_phone, $user_address);
+    $stmt->bind_result($user_first_name, $user_last_name, $user_phone, $user_address);
     $stmt->fetch();
     $stmt->close();
+    
+    // Combine first and last name
+    $user_name = $user_first_name . ' ' . $user_last_name;
     return array('user_name' => $user_name, 'user_phone' => $user_phone, 'user_address' => $user_address);
 }
 
 // Fetch user email from session
 $userEmail = isset($_SESSION['email']) ? $_SESSION['email'] : null;
 if ($userEmail) {
+    // Debugging output
+    error_log("User email: " . $userEmail);
+    
     $userDetails = getUserDetails($conn, $userEmail);
-    $user_name = $userDetails['user_name'];
-    $user_phone = $userDetails['user_phone'];
-    $user_address = $userDetails['user_address'];
+    if ($userDetails) {
+        $user_name = $userDetails['user_name'];
+        $user_phone = $userDetails['user_phone'];
+        $user_address = $userDetails['user_address'];
+        // Debugging output
+        error_log("User details: " . print_r($userDetails, true));
+    } else {
+        error_log("Error fetching user details.");
+        $user_name = $user_phone = $user_address = "N/A";
+    }
 } else {
+    error_log("User email is not set in session.");
     $user_name = $user_phone = $user_address = "N/A";
 }
 
@@ -49,6 +72,14 @@ $subtotal = isset($_SESSION['subtotal']) ? $_SESSION['subtotal'] : 0;
 $delivery_fee = 10;
 $total = $subtotal + $delivery_fee;
 ?>
+
+<!-- Debugging output -->
+<?php
+error_log("User name: " . $user_name);
+error_log("User phone: " . $user_phone);
+error_log("User address: " . $user_address);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

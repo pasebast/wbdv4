@@ -455,7 +455,7 @@ button.submit-btn:hover {
 
             if (!termsChecked) {
                 errorMessage = 'You must agree to the Terms and Conditions.';
-            } else if (password.length < 8) {
+            } else if (password.length < 😎 {
                 errorMessage = 'Password must be at least 8 characters long.';
             } else if (!/[A-Z]/.test(password)) {
                 errorMessage = 'Password must include at least 1 uppercase letter.';

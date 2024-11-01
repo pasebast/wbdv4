@@ -66,17 +66,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($stmt->execute()) {
         echo "<p>Account details updated successfully.</p>";
-
-        // Refresh user data
+        
+        // Close the update statement
         $stmt->close(); // Close the statement before preparing a new one
 
         // Re-fetch user details
-        $stmt = $conn->prepare($query);
+        $query = "SELECT First_Name, Last_Name, phone_number, delivery_address, city, zip_code, country FROM users WHERE email = ?"; // Prepare the query again
+        $stmt = $conn->prepare($query); // Prepare the statement
+
+        if (!$stmt) {
+            echo "<p>Error preparing statement: " . $conn->error . "</p>";
+            exit();
+        }
+
         $stmt->bind_param("s", $userEmail);
         $stmt->execute();
         $stmt->bind_result($firstName, $lastName, $phoneNumber, $deliveryAddress, $city, $zipCode, $country);
-        $stmt->fetch();
+        $result = $stmt->fetch(); // Fetch the result
 
+        // Store fetched data in $user array
         $user = array(
             'First_Name' => $firstName,
             'Last_Name' => $lastName,
@@ -90,7 +98,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "<p>Error updating account details: " . $stmt->error . "</p>";
     }
 }
-
 // Close database connection
 $conn->close();
 ?>
@@ -135,6 +142,28 @@ $conn->close();
         }
     </script>
 </head>
+<style>
+.myAccount-actions {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.myAccount-actions .myAccount-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #e74c3c;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.myAccount-actions .myAccount-button:hover {
+    background-color: #c0392b;
+    transform: scale(1.05);
+}
+
+</style>
 <body>
     <section class="header">
         <nav>
@@ -178,6 +207,13 @@ $conn->close();
             <button type="submit" class="myAccount-button" id="updateButton" style="display: none;">Update My Account</button>
             <p id="warningMessage" style="color: red; display: none;">Please fill in all required fields before updating your account.</p>
         </form>
+		
+		
+		
     </div>
+	<!-- Add this button link below the form -->
+<div class="myAccount-actions">
+    <a href="orderhistory.php" class="myAccount-button">View Order History</a>
+</div>
 </body>
 </html>
